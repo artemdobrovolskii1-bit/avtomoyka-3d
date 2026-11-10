@@ -431,7 +431,8 @@ new GLTFLoader().load('car.glb?v=2', (gltf) => {
   });
   loader.classList.add('hide');
   resize(); kick();
-}, (e) => { if (e.total) pctEl.textContent = Math.round(e.loaded / e.total * 100) + '%'; },
+}, (e) => { // GitHub отдаёт car.glb в gzip: e.total — сжатый размер, а e.loaded считает распакованные байты; делим на размер файла
+  pctEl.textContent = Math.min(99, Math.round(e.loaded / Math.max(e.total, 6078440) * 100)) + '%'; },
 (err) => { pctEl.textContent = '!'; console.error(err); });
 
 /* ===== прокрутка и камера ===== */
