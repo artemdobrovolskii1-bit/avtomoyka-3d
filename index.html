@@ -454,9 +454,10 @@ function ui(p){
   fin.classList.toggle('on', p > .9);
 }
 function camAt(p){
-  const a = THREE.MathUtils.lerp(.62, 2.75, p) + (reduce ? 0 : Math.sin(performance.now()/4000)*.02);
+  // полный круг 360° за прокрутку; приближение и высота — дугой, к концу камера возвращается в исходную точку
+  const a = .62 + p*Math.PI*2 + (reduce ? 0 : Math.sin(performance.now()/4000)*.02), m = Math.sin(p*Math.PI);
   const hf = Math.atan(Math.tan(camera.fov*Math.PI/360)*camera.aspect);
-  const r = Math.max(9.6, 2.75/Math.tan(hf)) - p*.7, y = THREE.MathUtils.lerp(2.2, 1.4, p);
+  const r = Math.max(9.6, 2.75/Math.tan(hf)) - m*.7, y = 2.2 - m*.8;
   camera.position.set(Math.cos(a)*r, y, Math.sin(a)*r);
   camera.lookAt(0, carH*(mobile ? .95 : .78), 0);
 }
