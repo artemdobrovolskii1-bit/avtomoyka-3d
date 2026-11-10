@@ -77,7 +77,7 @@ h2{font-size:clamp(30px,4.6vw,52px);margin-bottom:14px}
 .card:hover{transform:translateY(-6px);border-color:rgba(34,211,238,.5)}
 .card.hot{background:linear-gradient(160deg,rgba(34,211,238,.18),var(--card) 60%);border-color:rgba(34,211,238,.55)}
 .card h3{font-size:22px}
-.card .pr{font-family:Unbounded;font-weight:800;font-size:30px;color:var(--acc)}
+.card .pr{font-family:Unbounded;font-weight:800;font-size:clamp(20px,2.1vw,30px);white-space:nowrap;color:var(--acc)}
 .card .tm{font-size:14px;color:var(--mute)}
 .card ul{list-style:none;display:grid;gap:7px;margin-top:6px;font-size:15px;color:#c9d6ea}
 .card li::before{content:'✓ ';color:var(--acc);font-weight:800}
@@ -242,12 +242,12 @@ footer .made:hover{color:var(--acc)}
 <script>
 /* ===== Тексты и данные (правьте здесь) ===== */
 window.CFG = {
-  CUR: '$', WHATSAPP: '77777777777', OPEN: [8, 22],
+  WHATSAPP: '77777777777', OPEN: [8, 22],
   SERVICES: [
-    {id:'exp', price:15, time:{ru:'20 мин',en:'20 min'}, name:{ru:'Экспресс',en:'Express'}, items:{ru:['Кузов с пеной','Сушка','Коврики'],en:['Foam body wash','Drying','Floor mats']}},
-    {id:'cmp', price:35, hot:1, time:{ru:'50 мин',en:'50 min'}, name:{ru:'Комплекс',en:'Complete'}, items:{ru:['Кузов и диски','Салон пылесосом','Стёкла внутри','Защитный воск'],en:['Body and wheels','Interior vacuum','Inside glass','Protective wax']}},
-    {id:'det', price:120, time:{ru:'4 часа',en:'4 hours'}, name:{ru:'Детейлинг',en:'Detailing'}, items:{ru:['Глубокая чистка салона','Химчистка сидений','Чернение шин','Полировка фар'],en:['Deep interior clean','Seat shampoo','Tyre dressing','Headlight polish']}},
-    {id:'cer', price:290, time:{ru:'1 день',en:'1 day'}, name:{ru:'Керамика',en:'Ceramic'}, items:{ru:['Полировка кузова','Керамика 9H','Гарантия 12 месяцев'],en:['Paint polish','9H ceramic coat','12-month warranty']}}
+    {id:'exp', price:{ru:900,en:15}, time:{ru:'20 мин',en:'20 min'}, name:{ru:'Экспресс',en:'Express'}, items:{ru:['Кузов с пеной','Сушка','Коврики'],en:['Foam body wash','Drying','Floor mats']}},
+    {id:'cmp', price:{ru:2500,en:35}, hot:1, time:{ru:'50 мин',en:'50 min'}, name:{ru:'Комплекс',en:'Complete'}, items:{ru:['Кузов и диски','Салон пылесосом','Стёкла внутри','Защитный воск'],en:['Body and wheels','Interior vacuum','Inside glass','Protective wax']}},
+    {id:'det', price:{ru:9900,en:120}, time:{ru:'4 часа',en:'4 hours'}, name:{ru:'Детейлинг',en:'Detailing'}, items:{ru:['Глубокая чистка салона','Химчистка сидений','Чернение шин','Полировка фар'],en:['Deep interior clean','Seat shampoo','Tyre dressing','Headlight polish']}},
+    {id:'cer', price:{ru:24900,en:290}, time:{ru:'1 день',en:'1 day'}, name:{ru:'Керамика',en:'Ceramic'}, items:{ru:['Полировка кузова','Керамика 9H','Гарантия 12 месяцев'],en:['Paint polish','9H ceramic coat','12-month warranty']}}
   ],
   T: {
     ru:{nav1:'Услуги',nav2:'Как моем',nav3:'Запись',nav4:'Контакты',cta:'Записаться',cta2:'Записаться на мойку',clean:'Чистота',scroll:'Листайте ↓',loading:'Загружаем 3D-модель…',nogl:'Ваш браузер не поддерживает 3D. Откройте сайт в Chrome, Safari или Firefox.',
@@ -274,10 +274,12 @@ window.CFG = {
   try{ var s=localStorage.getItem('lang'); if(s==='en'||s==='ru') L=s; }catch(e){}
   function $(id){return document.getElementById(id)}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  // цена: в русской версии рубли «от 2 500 ₽», в английской доллары «from $35»
+  function pr(s){ var v=s.price[L]; return L==='ru' ? C.T.ru.from+' '+v.toLocaleString('ru-RU')+' ₽' : C.T.en.from+' $'+v; }
   function renderSvc(){
     var T=C.T[L];
-    $('svc').innerHTML=C.SERVICES.map(function(s){return '<div class="card rv in'+(s.hot?' hot':'')+'"><h3>'+esc(s.name[L])+'</h3><div class="pr">'+T.from+' '+C.CUR+s.price+'</div><div class="tm">'+esc(s.time[L])+'</div><ul>'+s.items[L].map(function(i){return '<li>'+esc(i)+'</li>'}).join('')+'</ul><a class="btn '+(s.hot?'pri':'ghost')+'" href="#book" data-svc="'+s.id+'">'+T.book+'</a></div>'}).join('');
-    $('svcSel').innerHTML=C.SERVICES.map(function(s){return '<option value="'+s.id+'">'+esc(s.name[L])+' — '+T.from+' '+C.CUR+s.price+'</option>'}).join('');
+    $('svc').innerHTML=C.SERVICES.map(function(s){return '<div class="card rv in'+(s.hot?' hot':'')+'"><h3>'+esc(s.name[L])+'</h3><div class="pr">'+pr(s)+'</div><div class="tm">'+esc(s.time[L])+'</div><ul>'+s.items[L].map(function(i){return '<li>'+esc(i)+'</li>'}).join('')+'</ul><a class="btn '+(s.hot?'pri':'ghost')+'" href="#book" data-svc="'+s.id+'">'+T.book+'</a></div>'}).join('');
+    $('svcSel').innerHTML=C.SERVICES.map(function(s){return '<option value="'+s.id+'">'+esc(s.name[L])+' — '+pr(s)+'</option>'}).join('');
     document.querySelectorAll('[data-svc]').forEach(function(a){a.addEventListener('click',function(){$('svcSel').value=a.getAttribute('data-svc')})});
   }
   function openNow(){ var h=new Date().getHours(), on=h>=C.OPEN[0]&&h<C.OPEN[1]; $('openDot').className=on?'on':''; $('openTxt').textContent=C.T[L][on?'openY':'openN']; }
